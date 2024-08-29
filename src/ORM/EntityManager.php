@@ -73,9 +73,9 @@ class EntityManager
         $sql = "CREATE TABLE $tableName (";
         $properties = $reflectionClass->getProperties();
         foreach($properties as $property) {
-            $columnName = $property->getName();
+            $columnAttributes = $property->getAttributes(Column::class)[0];
+            $columnName = $columnAttributes->newInstance()->name;
             $columnType = $this->mapType($property->getType(), $property->getName());
-            $columnAttributes = $property->getAttributes(Column::class);
             if(!empty($columnAttributes)) $sql .= "$columnName $columnType, ";
         }
 
