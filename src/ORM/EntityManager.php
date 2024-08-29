@@ -96,7 +96,7 @@ class EntityManager
     {
         $reflectionClass = new ReflectionClass($entity);
         $properties = $reflectionClass->getProperties();
-        $tableName = '';
+        $tableName = $reflectionClass->getAttributes(Entity::class)[0]->newInstance()->name;
         $idValue = null;
 
         foreach ($properties as $property) {
@@ -107,7 +107,6 @@ class EntityManager
                     if($property->isInitialized($entity)) {
                         $idValue = $property->getValue($entity);
                     }
-                    $tableName = $property->getDeclaringClass()->getAttributes(Entity::class)[0]->newInstance()->name;
                 }
             }
         }
