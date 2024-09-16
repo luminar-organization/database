@@ -10,6 +10,7 @@ The **Luminar Database** package is a core component of the Luminar PHP framewor
 - **ORM (Object-Relational Mapping)**: Interact with your database using PHP models.
 - **Query Builder**: Build complex SQL queries using fluent, object-oriented interface.
 - **Schema Builder**: Create, modify, and manage your database schema with ease.
+- **Migration Manager**: Export and import your database to easily migrate between servers.
 
 ## Installation
 To use the Luminar Database package, install iti via Composer:
@@ -120,6 +121,24 @@ $connection->query($sql);
 // Drop a table
 $sql = $schemaBuilder->drop('users');
 $connection->query($sql);
+```
+
+### Migration Manager
+The `MigrationManager` helps you migrating your database:
+
+```php
+use Luminar\Database\Connection\Connection;
+use Luminar\Database\Migration\MigrationManager;
+
+$connection = new Connection("your dsn", "example_username", "example_password");
+$migrationDir = "YOUR_PATH";
+$migrationManager = new MigrationManager($migrationDir, $connection);
+
+// Export Your Database
+$export = $migrationDir->export(); // Returns migration name `migrate-XXXXX`
+
+// Importing Database by migration name
+$migrationDir->import($export);
 ```
 
 ## Testing
