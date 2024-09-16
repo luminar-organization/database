@@ -46,7 +46,6 @@ class MigrationTest extends TestCase
 
             @unlink($migrationDir . $export . '.sql');
         } catch (PDOException $e) {
-            var_dump($e->getMessage());
             // Migration does not support sqlite
             echo "\nWARNING! Migration does not support sqlite so you need to have for e.g. MySQL Server\n";
             $this->assertTrue(true);
