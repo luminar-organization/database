@@ -130,8 +130,16 @@ class EntityManager
                     if (gettype($columnValue) == 'array') {
                         $columnValue = json_encode($columnValue);
                     }
-                    $values[] = $this->quote($columnValue);
-                    $updateFields[] = "$columnName = " . $this->quote($columnValue);
+                    if(gettype($columnValue) == 'string') {
+                        $values[] = $this->quote($columnValue);
+                        $updateFields[] = "$columnName = " . $this->quote($columnValue);
+                    } elseif($columnValue instanceof DateTime) {
+                        $values[] = $this->quote($columnValue->format('Y-m-d H:i:s'));
+                        $updateFields[] = "$columnName = " . $this->quote($columnValue->format('Y-m-d H:i:s'));
+                    } else {
+                        $values[] = $columnValue;
+                        $updateFields[] = "$columnName = " . $columnValue;
+                    }
                 }
             }
         }

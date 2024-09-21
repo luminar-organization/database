@@ -40,7 +40,6 @@ class MigrationManager
     public function import(string $name): true
     {
         $migrationDir = $this->dir . $name . '.sql';
-        var_dump($migrationDir);
         if(!file_exists($migrationDir)) {
             throw new MigrationException("Migration does not exist!");
         }
