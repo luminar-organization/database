@@ -11,7 +11,7 @@ class ExampleEntity
     #[Column(name: "id")]
     private int $id;
 
-    #[Column(name: "message")]
+    #[Column(name: "message", length: 50)]
     private string $message;
 
     public function getMessage(): string

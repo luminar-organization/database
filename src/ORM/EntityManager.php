@@ -28,20 +28,20 @@ class EntityManager
      * @return string
      * @throws Exception
      */
-    private function mapType(ReflectionNamedType $type, string $propertyName): string
+    private function mapType(ReflectionNamedType $type, string $propertyName, int $length): string
     {
         switch($type->getName()) {
             case 'int':
                 if($propertyName === 'id') {
                     return "INT AUTO_INCREMENT PRIMARY KEY";
                 }
-                return "INT";
+                return "INT ($length)";
             case 'string':
-                return 'VARCHAR(255)';
+                return "VARCHAR($length)";
             case '?int':
-                return "INT NULL";
+                return "INT($length) NULL";
             case '?string':
-                return "VARCHAR(255) NULL";
+                return "VARCHAR($length) NULL";
             case 'bool':
                 return "BOOL";
             case "?bool":
@@ -75,7 +75,8 @@ class EntityManager
         foreach($properties as $property) {
             $columnAttributes = $property->getAttributes(Column::class)[0];
             $columnName = $columnAttributes->newInstance()->name;
-            $columnType = $this->mapType($property->getType(), $property->getName());
+            $length = $columnAttributes->newInstance()->length;
+            $columnType = $this->mapType($property->getType(), $property->getName(), ($length));
             if(!empty($columnAttributes)) $sql .= "$columnName $columnType, ";
         }
 
