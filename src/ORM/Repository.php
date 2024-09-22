@@ -2,6 +2,7 @@
 
 namespace Luminar\Database\ORM;
 
+use DateTime;
 use Exception;
 use Luminar\Database\Connection\Connection;
 use PDO;
@@ -43,6 +44,7 @@ class Repository
 
     /**
      * @return array
+     * @throws Exception
      */
     public function getAll(): array
     {
@@ -57,6 +59,8 @@ class Repository
                 $name = "set" . ucfirst($key);
                 if($this->isJson($value)) {
                     $entityInstance->$name(json_decode($value, true));
+                } elseif($this->isDate($value)) {
+                    $entityInstance->$name(new DateTime($value));
                 } else {
                     $entityInstance->$name($value);
                 }
@@ -99,6 +103,7 @@ class Repository
     /**
      * @param array $data
      * @return array|bool
+     * @throws Exception
      */
     public function findMany(array $data): array|bool
     {
@@ -129,6 +134,8 @@ class Repository
                 $name = "set" . ucfirst($key);
                 if($this->isJson($value)) {
                     $response[$entityKey]->$name(json_decode($value, true));
+                } elseif($this->isDate($value)) {
+                    $response[$entityKey]->$name(new DateTime($value));
                 } else {
                     $response[$entityKey]->$name($value);
                 }
@@ -140,6 +147,7 @@ class Repository
     /**
      * @param array $data
      * @return array|false
+     * @throws Exception
      */
     public function findBy(array $data): object|bool
     {
@@ -167,6 +175,8 @@ class Repository
                 $name = "set" . ucfirst($key);
                 if($this->isJson($value)) {
                     $entityInstance->$name(json_decode($value, true));
+                } elseif($this->isDate($value)) {
+                    $entityInstance->$name(new DateTime($value));
                 } else {
                     $entityInstance->$name($value);
                 }
@@ -179,7 +189,21 @@ class Repository
      * @param string $value
      * @return bool
      */
-    private function isJson(string $value): bool
+    protected function isDate(string $value): bool
+    {
+        try {
+            new DateTime($value);
+            return true;
+        } catch(Exception $exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
+    protected  function isJson(string $value): bool
     {
         return json_decode($value, true) !== null;
     }
