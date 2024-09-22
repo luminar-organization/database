@@ -125,7 +125,7 @@ class EntityManager
             if (!empty($attributes)) {
                 $columnName = $attributes[0]->newInstance()->name;
                 if ($columnName != 'id') {
-                    $columnValue = $property->getValue($entity);
+                    $columnValue = $property->getValue($entity) ?? "NULL";
                     $fields[] = $columnName;
                     if (gettype($columnValue) == 'array') {
                         $columnValue = json_encode($columnValue);
