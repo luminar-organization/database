@@ -17,6 +17,11 @@ class EntityManager
      */
     protected Connection $connection;
 
+    protected array $supportedLengths = [
+        'INT',
+        'VARCHAR'
+    ];
+
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
@@ -25,6 +30,7 @@ class EntityManager
     /**
      * @param ReflectionNamedType $type
      * @param string $propertyName
+     * @param int $length
      * @return string
      * @throws Exception
      */
@@ -75,8 +81,19 @@ class EntityManager
         foreach($properties as $property) {
             $columnAttributes = $property->getAttributes(Column::class)[0];
             $columnName = $columnAttributes->newInstance()->name;
-            $length = $columnAttributes->newInstance()->length;
-            $columnType = $this->mapType($property->getType(), $property->getName(), ($length));
+            $columnType = $columnAttributes->newInstance()->type;
+            $length = strtoupper($columnAttributes->newInstance()->length);
+            if($columnType === 'native') {
+                $columnType = $this->mapType($property->getType(), $property->getName(), $length);
+            } else {
+                if($property->getName() === 'id') {
+                    $columnType = "INT AUTO_INCREMENT PRIMARY KEY";
+                } else {
+                    if($this->supportedLengths[$columnType]) {
+                        $columnType = $columnType . "($length)";
+                    }
+                }
+            }
             if(!empty($columnAttributes)) $sql .= "$columnName $columnType, ";
         }
 

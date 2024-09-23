@@ -60,6 +60,7 @@ class EntityTest extends TestCase
             // Adding new entity to database
             $newEntity = new ExampleEntity();
             $newEntity->setMessage('Example Message');
+            $newEntity->setContent("Example Content with unlimited length");
             $entityManager->persist($newEntity);
             // Searching already added entity with id 1
             $entity = $repository->findBy([
@@ -92,6 +93,7 @@ class EntityTest extends TestCase
             $this->assertNotFalse($connection->query("DROP TABLE " . $schema['table']));
         } catch (PDOException $e) {
             // Repository does not support sqlite
+            var_dump($e->getMessage());
             echo "\nWARNING! Repository does not support sqlite so you need to have for e.g. MySQL Server\n";
             $this->assertTrue(true);
             return;
