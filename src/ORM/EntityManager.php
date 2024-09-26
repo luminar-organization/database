@@ -88,7 +88,7 @@ class EntityManager
                 if($property->getName() === 'id') {
                     $columnType = "INT AUTO_INCREMENT PRIMARY KEY";
                 } else {
-                    if($this->supportedLengths[$columnType]) {
+                    if(@$this->supportedLengths[$columnType]) {
                         $columnType = $columnType . "($length)";
                     }
                 }
