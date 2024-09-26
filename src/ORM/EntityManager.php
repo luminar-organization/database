@@ -94,7 +94,11 @@ class EntityManager
                     }
                 }
             }
-            if(!empty($columnAttributes)) $sql .= "$columnName $columnType, ";
+            if($this->supportedLengths[$columnType]) {
+                if(!empty($columnAttributes)) $sql .= "$columnName $columnType($length), ";
+            } else {
+                if(!empty($columnAttributes)) $sql .= "$columnName $columnType, ";
+            }
         }
 
         $sql = rtrim($sql, ", ");
