@@ -12,7 +12,7 @@ class ExampleEntity
     #[Column(name: "id")]
     private int $id;
 
-    #[Column(name: "message", length: 50)]
+    #[Column(name: "message",type: TypesAttributes::TYPE_VARCHAR, length: 50)]
     private string $message;
 
     #[Column(name: "content", type: TypesAttributes::TYPE_LONGTEXT)]

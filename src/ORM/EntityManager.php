@@ -5,7 +5,6 @@ namespace Luminar\Database\ORM;
 use DateTime;
 use Exception;
 use Luminar\Database\Connection\Connection;
-use Luminar\Database\ORM\Types\Timestamp;
 use PDOStatement;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -18,8 +17,8 @@ class EntityManager
     protected Connection $connection;
 
     protected array $supportedLengths = [
-        'INT',
-        'VARCHAR'
+        'INT' => true,
+        'VARCHAR' => true
     ];
 
     public function __construct(Connection $connection)
@@ -81,9 +80,9 @@ class EntityManager
         foreach($properties as $property) {
             $columnAttributes = $property->getAttributes(Column::class)[0];
             $columnName = $columnAttributes->newInstance()->name;
-            $columnType = $columnAttributes->newInstance()->type;
-            $length = strtoupper($columnAttributes->newInstance()->length);
-            if($columnType === 'native') {
+            $columnType = strtoupper($columnAttributes->newInstance()->type);
+            $length = $columnAttributes->newInstance()->length;
+            if($columnType === 'NATIVE') {
                 $columnType = $this->mapType($property->getType(), $property->getName(), $length);
             } else {
                 if($property->getName() === 'id') {
@@ -94,11 +93,7 @@ class EntityManager
                     }
                 }
             }
-            if($this->supportedLengths[$columnType]) {
-                if(!empty($columnAttributes)) $sql .= "$columnName $columnType($length), ";
-            } else {
-                if(!empty($columnAttributes)) $sql .= "$columnName $columnType, ";
-            }
+            if(!empty($columnAttributes)) $sql .= "$columnName $columnType, ";
         }
 
         $sql = rtrim($sql, ", ");
