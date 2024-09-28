@@ -173,6 +173,9 @@ class Repository
         foreach($result as $entity) {
             foreach($entity as $key => $value) {
                 $name = "set" . ucfirst($key);
+                if($value === null) {
+                    continue;
+                }
                 if($this->isJson($value)) {
                     $entityInstance->$name(json_decode($value, true));
                 } elseif($this->isDate($value)) {

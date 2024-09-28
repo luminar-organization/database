@@ -6,7 +6,7 @@ use Exception;
 use Luminar\Database\Connection\Connection;
 use Luminar\Database\ORM\EntityManager;
 use Luminar\Database\ORM\Repository;
-use PDO;
+use Luminar\Database\Tests\fixtures\ExampleEntity;
 use PDOException;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -93,7 +93,6 @@ class EntityTest extends TestCase
             $this->assertNotFalse($connection->query("DROP TABLE " . $schema['table']));
         } catch (PDOException $e) {
             // Repository does not support sqlite
-            var_dump($e->getMessage());
             echo "\nWARNING! Repository does not support sqlite so you need to have for e.g. MySQL Server\n";
             $this->assertTrue(true);
             return;
