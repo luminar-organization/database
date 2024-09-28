@@ -77,11 +77,27 @@ class EntityManager
         $tableName = $entityAttributes[0]->newInstance()->name;
         $sql = "CREATE TABLE $tableName (";
         $properties = $reflectionClass->getProperties();
+        $relationship = [
+            'column' => '',
+            'databaseRelationship' => null
+        ];
         foreach($properties as $property) {
             $columnAttributes = $property->getAttributes(Column::class)[0];
-            $columnName = $columnAttributes->newInstance()->name;
-            $columnType = strtoupper($columnAttributes->newInstance()->type);
-            $length = $columnAttributes->newInstance()->length;
+            $instance = $columnAttributes->newInstance();
+            $columnName = $instance->name;
+            $columnType = strtoupper($instance->type);
+            $default = $instance->default;
+            $length = $instance->length;
+
+            /**
+             * @var $databaseRelationship DatabaseRelationship
+             */
+            $databaseRelationship = $instance->databaseRelationship;
+            if($databaseRelationship) {
+                $relationship['column'] = $columnName;
+                $relationship['databaseRelationship'] = $databaseRelationship;
+            }
+
             if($columnType === 'NATIVE') {
                 $columnType = $this->mapType($property->getType(), $property->getName(), $length);
             } else {
@@ -93,7 +109,24 @@ class EntityManager
                     }
                 }
             }
+
+
+            if($default) {
+                $columnType .= " DEFAULT $default";
+            }
+
             if(!empty($columnAttributes)) $sql .= "$columnName $columnType, ";
+        }
+
+        $databaseRelationship = $relationship['databaseRelationship'];
+        if($databaseRelationship) {
+            $sql .= "FOREIGN KEY (" . $relationship['column'] . ") REFERENCES " . $databaseRelationship->getSourceTable() . "(" . $databaseRelationship->getSourceColumn() . ")";
+            if($databaseRelationship->getOnDelete()) {
+                $sql .= " ON DELETE " . strtoupper($databaseRelationship->getOnDelete());
+            }
+            if($databaseRelationship->getOnUpdate()) {
+                $sql .= " ON UPDATE " . strtoupper($databaseRelationship->getOnUpdate());
+            }
         }
 
         $sql = rtrim($sql, ", ");

@@ -1,6 +1,6 @@
 <?php
 
-namespace Luminar\Database\Tests;
+namespace Luminar\Database\Tests\fixtures;
 
 use Luminar\Database\ORM\Column;
 use Luminar\Database\ORM\Entity;
