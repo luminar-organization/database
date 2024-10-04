@@ -176,7 +176,7 @@ class EntityManager
                     } elseif($columnValue instanceof DateTime) {
                         $values[] = $this->quote($columnValue->format('Y-m-d H:i:s'));
                         $updateFields[] = "$columnName = " . $this->quote($columnValue->format('Y-m-d H:i:s'));
-                    } else {
+                    } elseif($columnValue !== "NULL" and $columnValue !== null) {
                         $values[] = $columnValue;
                         $updateFields[] = "$columnName = " . $columnValue;
                     }
