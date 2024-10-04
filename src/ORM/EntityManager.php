@@ -149,18 +149,6 @@ class EntityManager
         $tableName = $reflectionClass->getAttributes(Entity::class)[0]->newInstance()->name;
         $idValue = null;
 
-        foreach ($properties as $property) {
-            $attributes = $property->getAttributes(Column::class);
-            if (!empty($attributes)) {
-                $columnName = $attributes[0]->newInstance()->name;
-                if ($columnName == 'id') {
-                    if($property->isInitialized($entity)) {
-                        $idValue = $property->getValue($entity);
-                    }
-                }
-            }
-        }
-
         if (!$tableName) {
             throw new Exception("Entity is missing Entity attribute");
         }
@@ -174,7 +162,10 @@ class EntityManager
             if (!empty($attributes)) {
                 $columnName = $attributes[0]->newInstance()->name;
                 if ($columnName != 'id') {
-                    $columnValue = $property->getValue($entity) ?? "NULL";
+                    $columnValue = "NULL";
+                    if($property->isInitialized($entity)) {
+                        $columnValue = $property->getValue($entity);
+                    }
                     $fields[] = $columnName;
                     if (gettype($columnValue) == 'array') {
                         $columnValue = json_encode($columnValue);
@@ -188,6 +179,10 @@ class EntityManager
                     } else {
                         $values[] = $columnValue;
                         $updateFields[] = "$columnName = " . $columnValue;
+                    }
+                } else {
+                    if($property->isInitialized($entity)) {
+                        $idValue = $property->getValue($entity);
                     }
                 }
             }
