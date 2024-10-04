@@ -162,21 +162,23 @@ class EntityManager
             if (!empty($attributes)) {
                 $columnName = $attributes[0]->newInstance()->name;
                 if ($columnName != 'id') {
-                    $columnValue = "NULL";
+                    $columnValue = null;
                     if($property->isInitialized($entity)) {
                         $columnValue = $property->getValue($entity);
                     }
-                    $fields[] = $columnName;
                     if (gettype($columnValue) == 'array') {
                         $columnValue = json_encode($columnValue);
                     }
-                    if(gettype($columnValue) == 'string') {
+                    if(gettype($columnValue) == 'string' and ($columnValue !== "NULL" and $columnValue !== null)) {
+                        $fields[] = $columnName;
                         $values[] = $this->quote($columnValue);
                         $updateFields[] = "$columnName = " . $this->quote($columnValue);
                     } elseif($columnValue instanceof DateTime) {
+                        $fields[] = $columnName;
                         $values[] = $this->quote($columnValue->format('Y-m-d H:i:s'));
                         $updateFields[] = "$columnName = " . $this->quote($columnValue->format('Y-m-d H:i:s'));
-                    } elseif($columnValue !== "NULL" and $columnValue !== null) {
+                    } elseif($columnValue !== null and $columnValue !== "NULL") {
+                        $fields[] = $columnName;
                         $values[] = $columnValue;
                         $updateFields[] = "$columnName = " . $columnValue;
                     }
