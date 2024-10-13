@@ -7,7 +7,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Column
 {
-    public function __construct(public string $name, public string $type = "native", public ?string $default = null, public int $length = 10, public ?DatabaseRelationship $databaseRelationship = null)
+    public function __construct(public string $name, public bool $unique = false, public string $type = "native", public ?string $default = null, public int $length = 10, public ?DatabaseRelationship $databaseRelationship = null)
     {
     }
 }

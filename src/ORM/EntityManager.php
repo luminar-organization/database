@@ -88,6 +88,7 @@ class EntityManager
             $columnType = strtoupper($instance->type);
             $default = $instance->default;
             $length = $instance->length;
+            $unique = $instance->unique;
 
             /**
              * @var $databaseRelationship DatabaseRelationship
@@ -105,7 +106,11 @@ class EntityManager
                     $columnType = "INT AUTO_INCREMENT PRIMARY KEY";
                 } else {
                     if(@$this->supportedLengths[$columnType]) {
-                        $columnType = $columnType . "($length)";
+                        if($unique) {
+                            $columnType = $columnType . "($length) UNIQUE";
+                        } else {
+                            $columnType = $columnType . "($length)";
+                        }
                     }
                 }
             }

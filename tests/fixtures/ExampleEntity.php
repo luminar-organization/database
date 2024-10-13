@@ -12,6 +12,9 @@ class ExampleEntity
     #[Column(name: "id")]
     private int $id;
 
+    #[Column(name: "name", unique: true, type: TypesAttributes::TYPE_VARCHAR, length: 50)]
+    private string $name;
+
     #[Column(name: "message",type: TypesAttributes::TYPE_VARCHAR, length: 50)]
     private string $message;
 
@@ -52,5 +55,21 @@ class ExampleEntity
     public function setContent(string $content): void
     {
         $this->content = $content;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 }
