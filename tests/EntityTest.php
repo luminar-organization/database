@@ -7,6 +7,7 @@ use Luminar\Database\Connection\Connection;
 use Luminar\Database\ORM\EntityManager;
 use Luminar\Database\ORM\Repository;
 use Luminar\Database\Tests\fixtures\ExampleEntity;
+use Luminar\Database\Tests\fixtures\ExampleRepository;
 use PDOException;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -50,7 +51,7 @@ class EntityTest extends TestCase
             // Create schema for our test ExampleEntity
             $schema = $entityManager->schema(new ExampleEntity());
             // Initialize Repository for this entity
-            $repository = new Repository(ExampleEntity::class, $connection);
+            $repository = new ExampleRepository(ExampleEntity::class, $connection);
             // Checking that schema has been generated
             $this->assertNotNull($schema);
             // Executing schema
@@ -73,9 +74,7 @@ class EntityTest extends TestCase
             $entity->setMessage('Hello World');
             $entityManager->persist($entity);
             // Searching again to find entity with id 1
-            $entity = $repository->findBy([
-                'id' => 1
-            ]);
+            $entity = $repository->getWithId(1);
             // Checking do we found entity and checking do we found right entity with message: "hello World"
             $this->assertInstanceOf(ExampleEntity::class, $entity);
             $this->assertEquals("Hello World", $entity->getMessage());
